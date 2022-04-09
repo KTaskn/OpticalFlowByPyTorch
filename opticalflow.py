@@ -1,4 +1,5 @@
 import torch
+import torchvision.transforms.functional as TF
 # Moore neighborhood
 Q = 3
 
@@ -30,9 +31,9 @@ def optical_flow(img0, img1):
         torch.tensor(img0.size(1) if img0.size(1) < img0.size(2) else img0.size(2))
     ).int() - torch.log2(torch.tensor(8)).int()
     pyramid = [
-        kl(
-            VF.resize(img0, (img0.size(1)//r, img0.size(2)//r)),
-            VF.resize(img1, (img1.size(1)//r, img1.size(2)//r))
+        lucas_kanade_method(
+            TF.resize(img0, (img0.size(1)//r, img0.size(2)//r)),
+            TF.resize(img1, (img1.size(1)//r, img1.size(2)//r))
         ).permute(2, 0, 1) * r * Q
         for r in reversed([2 ** i for i in range(N)])
     ]
